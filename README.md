@@ -8,6 +8,35 @@ Professor: Cleiton Silva Tavares
 
 História de Usuário:
 
+Como cliente, eu quero me cadastrar no sistema para ter acesso aos serviços de aluguel de automóveis.
+
+Como cliente, eu quero introduzir um pedido de aluguel de automóvel para poder utilizá-lo em determinado período.
+
+Como cliente, eu quero modificar um pedido de aluguel de automóvel já existente caso ocorra alguma mudança no meu planejamento.
+
+Como cliente, eu quero consultar meus pedidos de aluguel de automóveis para verificar as informações dos contratos.
+
+Como cliente, eu quero cancelar um pedido de aluguel de automóvel caso ocorra algum imprevisto.
+
+Como agente, eu quero modificar um pedido de aluguel de automóvel já existente para ajustar as condições contratuais.
+
+Como agente, eu quero avaliar um pedido de aluguel de automóvel do ponto de vista financeiro para determinar se é viável conceder o contrato.
+
+Como agente, eu quero executar o contrato de aluguel de automóvel em caso de avaliação financeira positiva.
+
+Como usuário do sistema, eu quero visualizar os dados de identificação dos contratantes do aluguel (RG, CPF, Nome, Endereço, profissão e entidades empregadoras) para fins administrativos.
+
+Como usuário do sistema, eu quero visualizar os rendimentos auferidos pelos contratantes do aluguel para fins de análise financeira.
+
+Como usuário do sistema, eu quero visualizar as informações dos automóveis disponíveis para aluguel (matrícula, ano, marca, modelo e placa) para escolher o veículo desejado.
+
+Como usuário do sistema, eu quero visualizar as condições do contrato de aluguel de automóvel (proprietário do veículo e tipo de contrato) para ter conhecimento das obrigações contratuais.
+
+Como agente do banco, eu quero associar um contrato de crédito a um pedido de aluguel de automóvel para oferecer um financiamento ao cliente.
+
+Como usuário do sistema, eu quero acessar o sistema por meio de computadores locais ou dispositivos móveis para ter mais flexibilidade no uso da plataforma.
+
+
 
 
 
