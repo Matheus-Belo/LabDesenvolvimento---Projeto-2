@@ -85,3 +85,61 @@ CREATE TABLE user_roles (
                     CONSTRAINT FK_user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
                     CONSTRAINT FK_role_id FOREIGN KEY (role_id) REFERENCES roles(roles_id)
 );
+
+CREATE SEQUENCE rents_seq;
+CREATE TABLE rents (
+                          rents_id INT DEFAULT NEXTVAL ('rents_seq') PRIMARY KEY,
+                          creator_id INT CHECK (creator_id > 0) NOT NULL,
+                          attendant_id INT CHECK (creator_id > 0) NOT NULL,
+                          vehicles_id INT CHECK (vehicles_id > 0) NOT NULL,
+                          status VARCHAR(50),
+                          withdraw_date TIMESTAMP(0),
+                          return_date TIMESTAMP(0),
+                          price INT NOT NULL,
+                          payment_Status VARCHAR(50),
+
+
+                          created_at TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+                          deleted_at TIMESTAMP(0) NULL DEFAULT NULL,
+
+                          CONSTRAINT FK_creator_id FOREIGN KEY (creator_id) REFERENCES users(user_id),
+                          CONSTRAINT FK_attendant_id FOREIGN KEY (attendant_id) REFERENCES users(user_id),
+                          CONSTRAINT FK_vehicles_id FOREIGN KEY (vehicles_id) REFERENCES vehicles(vehicles_id)
+
+
+);
+
+
+
+CREATE SEQUENCE vehicles_seq;
+CREATE TABLE vehicles (
+                            vehicles_id INT DEFAULT NEXTVAL ('vehicles_seq') PRIMARY KEY,
+                            name VARCHAR(50) NOT NULL ,
+                            chassi VARCHAR(50) NOT NULL ,
+                            license_plate VARCHAR(50) NOT NULL,
+                            manufacturer VARCHAR(50) NOT NULL,
+                            manufactured_year VARCHAR(50) NOT NULL,
+                            legal_document VARCHAR (50) NOT NULL,
+
+                            created_at TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+                            deleted_at TIMESTAMP(0) NULL DEFAULT NULL
+
+);
+
+CREATE SEQUENCE rent_contracts_seq;
+CREATE TABLE rent_contracts (
+                          rent_contracts_id INT DEFAULT NEXTVAL ('rent_contracts_seq') PRIMARY KEY,
+                          vehicles_id INT CHECK (vehicles_id > 0) NOT NULL,
+                          rents_id INT CHECK (rents_id > 0) NOT NULL,
+                          contract_type VARCHAR (10),
+                          file_path VARCHAR (50),
+                          contract_number VARCHAR(50),
+                          contract_description VARCHAR(250),
+
+                          created_at TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+                          deleted_at TIMESTAMP(0) NULL DEFAULT NULL,
+
+                          CONSTRAINT FK_vehicles_id FOREIGN KEY (vehicles_id) REFERENCES vehicles(vehicles_id),
+                          CONSTRAINT FK_rents_id FOREIGN KEY (rents_id) REFERENCES rents(rents_id)
+
+);
