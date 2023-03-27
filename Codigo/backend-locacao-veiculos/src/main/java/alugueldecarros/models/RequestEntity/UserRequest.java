@@ -78,24 +78,13 @@ public class UserRequest {
         Date dueDate;
         Calendar c = Calendar.getInstance();
 
-        /*if(roles.stream().anyMatch(f -> f.getName().equals(RolesEnum.ALUNO.getCode()))) {
-            c.setTime(user.getDueDate());
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-
-            dueDate = c.getTime();
-        }else {
-            dueDate = null;
-        }*/
 
         c.setTime(user.getBirthDate());
         Date birthDate = c.getTime();
 
         User newUSer;
 
-        if(!roles.stream().anyMatch(f -> f.getName().equals(RolesEnum.USER.getCode()))) {
+        if(!roles.stream().anyMatch(f -> f.getName().equals(RolesEnum.CLIENT.getCode()))) {
             newUSer = new User(
                     user.getName(),
                     user.getEmail(),

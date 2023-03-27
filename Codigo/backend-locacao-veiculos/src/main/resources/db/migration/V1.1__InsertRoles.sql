@@ -1,8 +1,9 @@
 INSERT INTO roles(name, created_at, deleted_at) VALUES
     ('ADMIN', now(), null),
-    ('DEV', now(), null),
-    ('USER', now(), null),
-    ('DEF', now(), null);
+    ('CLIENT', now(), null),
+    ('SELLERS', now(), null),
+    ('FINANCIAL', now(), null),
+    ('THIRDPARTY', now(), null);
 
 INSERT INTO states(state, uf) VALUES
    ('Rondônia','RO'),

@@ -86,6 +86,21 @@ CREATE TABLE user_roles (
                     CONSTRAINT FK_role_id FOREIGN KEY (role_id) REFERENCES roles(roles_id)
 );
 
+CREATE SEQUENCE vehicles_seq;
+CREATE TABLE vehicles (
+                          vehicles_id INT DEFAULT NEXTVAL ('vehicles_seq') PRIMARY KEY,
+                          name VARCHAR(250) NOT NULL ,
+                          chassi VARCHAR(50) NOT NULL ,
+                          license_plate VARCHAR(50) NOT NULL,
+                          manufacturer VARCHAR(50) NOT NULL,
+                          manufactured_year VARCHAR(50) NOT NULL,
+                          legal_document VARCHAR (50) NOT NULL,
+
+                          created_at TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+                          deleted_at TIMESTAMP(0) NULL DEFAULT NULL
+
+);
+
 CREATE SEQUENCE rents_seq;
 CREATE TABLE rents (
                           rents_id INT DEFAULT NEXTVAL ('rents_seq') PRIMARY KEY,
@@ -110,21 +125,6 @@ CREATE TABLE rents (
 );
 
 
-
-CREATE SEQUENCE vehicles_seq;
-CREATE TABLE vehicles (
-                            vehicles_id INT DEFAULT NEXTVAL ('vehicles_seq') PRIMARY KEY,
-                            name VARCHAR(50) NOT NULL ,
-                            chassi VARCHAR(50) NOT NULL ,
-                            license_plate VARCHAR(50) NOT NULL,
-                            manufacturer VARCHAR(50) NOT NULL,
-                            manufactured_year VARCHAR(50) NOT NULL,
-                            legal_document VARCHAR (50) NOT NULL,
-
-                            created_at TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
-                            deleted_at TIMESTAMP(0) NULL DEFAULT NULL
-
-);
 
 CREATE SEQUENCE rent_contracts_seq;
 CREATE TABLE rent_contracts (

@@ -5,9 +5,10 @@ import java.io.Serializable;
 
 public enum RolesEnum implements Serializable {
     ADMIN("ADMIN"),
-    DEV("DEVELOPER"),
-    USER("USUARIO"),
-    DEF("DEFESACIVIL");
+    FINANCIAL("FINANCEIRO"),
+    CLIENT("CLIENTES"),
+    SELLERS("VENDEDORES"),
+    THIRDPARTY("PARCEIROS");
 
     private final String code;
 
