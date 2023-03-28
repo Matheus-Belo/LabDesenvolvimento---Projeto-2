@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:7070/'
+/**const API_URL = 'http://localhost:5500/'
 const sizes = 10;
 var currentPage = 0;
 var tokenL = localStorage.getItem('token');
@@ -12,13 +12,18 @@ var savedData
 //----------------------------------HTML CALLS -------------------------------------------------------------------------------------------------------------------
   
 async function onClickPostCreateUsuario(){
+    var DataNew = (document.getElementById("ano").value) + '/' + 
+    (document.getElementById("mes").value) + '/' + 
+    (document.getElementById("dia").value)
+
+    const d = new Date(DataNew);
     console.log('body prepare');
-    var urlUsuario = API_URL + "/Users";
+    var urlUsuario = API_URL + "/Usuarios/Usuarios";
     var body = {
         nome: String(document.getElementById("nome").value),
         email: String(document.getElementById("email").value),
         documentLegal: String(document.getElementById("documentoLegal").value),
-        aniversario: Date(document.getElementById("aniversario").value),
+        aniversario: d,
         phone1: String((document.getElementById("phone1").value)),
         phone2: String((document.getElementById("phone2").value)),
         sexo: String((document.getElementById("sexo").value)),
@@ -35,7 +40,7 @@ async function onClickPostCreateUsuario(){
     const response = await fetch(urlUsuario, {
         method: "POST",
         headers: {
-            'host': 'localhost:8080',
+            'host': 'localhost:5500',
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/JSON',
             'authorization': 'Bearer ' + tokenL
@@ -52,7 +57,7 @@ async function onClickPostCreateUsuario(){
 function showContentIn(data, elementId){
 	table = 
 "	<div>\
-	  <table class=\"table table-striped\">\
+	  <table class=\"table table-striped\" style=\"width:100%\">\
 		<thead>\
 		  <tr>\
 			<th scope=\"col\">#</th>\
@@ -77,6 +82,7 @@ function showContentIn(data, elementId){
 		  
 
 	$("#"+elementId)[0].innerHTML = table
+    document.getElementById("UserTable").innerHTML = table
 }
 
 function getTableBody(content){
@@ -135,4 +141,111 @@ function showPagination(data, elementId, path){
 	</nav>"
 	
 	$("#"+elementId+"_pagination")[0].innerHTML =  pagination
+}*/
+
+localStorage.setItem(token, "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJleHAiOjE2ODAwNjIxOTYsImlhdCI6MTY4MDA0NDE5Nn0.a7Dr_QOAJm02q6dHjkMaol5St0Xpw8oTFgq1dQEurRrd-xAlponfT0kWmQNSOtFfj_C4KMrl_ILOfP_E2W5K8g")
+
+async function CreateUser(){
+	var DataNew = (document.getElementById("ano").value) + '/' + 
+    (document.getElementById("mes").value) + '/' + 
+    (document.getElementById("dia").value)
+
+    const d = new Date(DataNew);
+    console.log('body prepare');
+    var body = {
+        nome: String(document.getElementById("nome").value),
+        email: String(document.getElementById("email").value),
+        documentLegal: String(document.getElementById("documentoLegal").value),
+        aniversario: d,
+        phone1: String((document.getElementById("phone1").value)),
+        phone2: String((document.getElementById("phone2").value)),
+        sexo: String((document.getElementById("sexo").value)),
+        estado: String((document.getElementById("estado").value)),
+        cidade: String((document.getElementById("cidade").value)),
+        rua: String((document.getElementById("rua").value)),
+        numeroCasa: String((document.getElementById("numeroCasa").value)),
+        destrito: String((document.getElementById("destrito").value)),
+        zip: String((document.getElementById("zip").value)),
+        senha: String((document.getElementById("senha").value)),
+        senhaRepetida: String((document.getElementById("senhaRepetida").value))
+    }
+
+	if((ValidateCreate(	document.getElementById("nome").value,
+						document.getElementById("email").value,
+						document.getElementById("documentoLegal").value,
+						d,
+						document.getElementById("phone1").value,
+						document.getElementById("sexo").value,
+						document.getElementById("estado").value,
+						document.getElementById("cidade").value,
+						document.getElementById("rua").value,
+						document.getElementById("numeroCasa").value,
+						document.getElementById("destrito").value,
+						document.getElementById("zip").value,
+						document.getElementById("senha").value,
+						document.getElementById("senhaRepetida").value)) == true){
+		
+
+		console.log(body)
+    
+		var data = JSON.stringify(body);
+
+		//let data = await response.json();
+		console.log(data);
+	}else{
+		alert("Um ou mais campos vazios");
+	}
+
+}
+
+async function ValidateCreate(nome, email, documentLegal, aniversario, phone1, sexo, estado, cidade, rua, numeroCasa, destrito, zip, senha, senhaRepetida){
+	if(nome === null) return false;
+	if(email.trim() === "") return false;
+	if(documentLegal === null) return false;
+	if(aniversario === null) return false;
+	if(phone1 === null) return false;
+	if(sexo === null) return false;
+	if(estado === null) return false;
+	if(cidade === null) return false;
+	if(rua === null) return false;
+	if(numeroCasa === null) return false;
+	if(destrito === null) return false;
+	if(zip === null) return false;
+	if(senha === null) return false;
+	if(senhaRepetida === null) return false;
+	if(senha !== senhaRepetida) return false;
+	else return true;
+
+}
+
+async function onClickPostCreateUsuario(){
+    var DataNew = (document.getElementById("ano").value) + '/' + 
+    (document.getElementById("mes").value) + '/' + 
+    (document.getElementById("dia").value)
+
+    const d = new Date(DataNew);
+    console.log('body prepare');
+    var body = {
+        nome: String(document.getElementById("nome").value),
+        email: String(document.getElementById("email").value),
+        documentLegal: String(document.getElementById("documentoLegal").value),
+        aniversario: d,
+        phone1: String((document.getElementById("phone1").value)),
+        phone2: String((document.getElementById("phone2").value)),
+        sexo: String((document.getElementById("sexo").value)),
+        estado: String((document.getElementById("estado").value)),
+        cidade: String((document.getElementById("cidade").value)),
+        rua: String((document.getElementById("rua").value)),
+        numeroCasa: String((document.getElementById("numeroCasa").value)),
+        destrito: String((document.getElementById("destrito").value)),
+        zip: String((document.getElementById("zip").value)),
+        senha: String((document.getElementById("senha").value)),
+        senhaRepetida: String((document.getElementById("senhaRepetida").value))
+    }
+    console.log(body)
+    
+	var data = JSON.stringify(body);
+
+    //let data = await response.json();
+    console.log(data);
 }
