@@ -143,8 +143,6 @@ function showPagination(data, elementId, path){
 	$("#"+elementId+"_pagination")[0].innerHTML =  pagination
 }*/
 
-localStorage.setItem(token, "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJleHAiOjE2ODAwNjIxOTYsImlhdCI6MTY4MDA0NDE5Nn0.a7Dr_QOAJm02q6dHjkMaol5St0Xpw8oTFgq1dQEurRrd-xAlponfT0kWmQNSOtFfj_C4KMrl_ILOfP_E2W5K8g")
-
 async function CreateUser(){
 	var DataNew = (document.getElementById("ano").value) + '/' + 
     (document.getElementById("mes").value) + '/' + 

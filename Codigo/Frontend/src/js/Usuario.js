@@ -1,83 +1,216 @@
 let url = "http://localhost:9999";
-localStorage.setItem('token', "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJleHAiOjE2ODAwNjIxOTYsImlhdCI6MTY4MDA0NDE5Nn0.a7Dr_QOAJm02q6dHjkMaol5St0Xpw8oTFgq1dQEurRrd-xAlponfT0kWmQNSOtFfj_C4KMrl_ILOfP_E2W5K8g")
 let token = localStorage.getItem('token');
 let user = [];
+const API_URL = 'http://localhost:9999/'
+const sizes = 10;
+var currentPage = 0;
+var listOfTableContent = []
+var savedData
 
-async function Test(){
-    const testData = await fetch(url + '/user/page/0/size/100', {
-        method: "GET",
+
+$(document).ready(function() {
+
+    searchAllUsers()
+
+});
+function searchAllUsers(){
+
+    let path = 'user/page/0/size/10/'
+    get(path,'UserTable');
+}
+
+// METODOS PARA CHAMAR ROTA VIA AJAX
+function callRoute(path, route_type, body, elementId, completeFunction){
+    returnedData = ""
+    let token = localStorage.getItem('token');
+
+    $.ajax({
+        // Our sample url to make request
+        url: path,
+        crossDomain: true,
+        type: route_type,
+        dataType: 'json',
+        contentType: "application/json",
+        data: JSON.stringify(body),
         headers: {
-            'host': 'localhost:9999',
-            'Access-Control-Allow-Origin': '*/*',
-            'Content-Type': 'application/JSON',
-            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-            'authorization': 'Bearer ' + token
+            'Access-Control-Allow-Origin': '*',
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+        },
+        success: function (data) {
+            console.log("rota: "+completeFunction+", executada")
+        },
+        // Error handling
+        error: function (error) {
+            console.log("rota: "+completeFunction+", nao executada, ERRO: ")
+            console.log(error)
+        },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer '+token);
+        },
+        complete: function (data) {
+
+            switch (completeFunction) {
+
+                case 1: //USUARIOS
+                    showContentIn(data.responseJSON, elementId)
+                    showPagination(data.responseJSON, "Pagination", path)
+                    break;
+                case 2: //LIVROS
+
+                    savedData = data.responseJSON
+                    showContentBookSearch(data.responseJSON, elementId)
+                    showPaginationBookSeach(data.responseJSON, elementId, path)
+
+
+                    break;
+                case 3:
+
+            }
+
+
         }
     });
-    console.log(testData);
+}
 
-    var DadosTest = await JSON.stringify(testData);
+//----------------------------------HTML CALLS -------------------------------------------------------------------------------------------------------------------
 
-    console.log(DadosTest);
+function get(path, elementId){
+
+
+    callRoute(API_URL+path, 'GET', undefined, elementId,1)
 
 }
 
-$(document).ready(function () {
-    var table = $('#Usuarios').DataTable({
-        ajax: {
-            urlUsers: url + '/user/page/0/size/100',
-            dataSrc: "content",
-        },
-    });
+function post(path, body, elementId){
+    callRoute(API_URL+path, 'POST', body)
+}
 
- 
-    $('#Usuarios tbody').on('click', 'tr', function () {
-        if ($(this).hasClass('selected')) {
-            $(this).removeClass('selected');
-        } else {
-            table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    });
 
-    $('#CreateUser').on('click', function () {
-        
-    });
- 
-    $('#DeletarUsuario').click(function () {
-        table.row('.selected').remove().draw(false);
-    });
-});
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Montar tabela no HTML com JS para usuarios
+function showContentIn(data, elementId){
+    table =
+        "	<div>\
+              <table class=\"table table-striped\">\
+                <thead>\
+                  <tr>\
+                    <th scope=\"col\">#</th>\
+                    <th scope=\"col\">Nome</th>\
+                    <th scope=\"col\">Email</th>\
+                    <th scope=\"col\">Documento Legal</th>\
+                    <th scope=\"col\">Telefone</th>\
+                    <th scope=\"col\">Editar Cadastro</th>\
+                    <th scope=\"col\">Verifica Solicitações</th>\
+                  </tr>\
+                </thead>\
+                <tbody>"+
+        getTableBody(data.content)
+        +
+        "</tbody>\
+      </table>\
+    </div>\
+"
+
+    $("#"+elementId)[0].innerHTML = table
+}
+
+
+function getTableBody(content){
+    tableBody = "";
+    listOfTableContent = content
+    for(i = 0; i < content.length; i++){
+        tableBody +=  "<tr>\
+			<th scope=\"row\">"
+            +content[i]['idUser']+
+            "</th>\
+            <td>"+content[i]['name']+"</td>\
+			<td>"+content[i]['email']+"</td>\
+			<td>"+content[i]['legal_document']+"</td>\
+			<td>"+content[i]['phone1']+"</td>\
+			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Editar</button>\</td>\
+			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
+		  </tr>"
+    }
+    return tableBody;
+}
+
+
+//Montar botoes de paginação
+function showPagination(data, elementId, path){
+    console.log("paginação")
+    console.log(data, elementId, path)
+
+    let currentPage = data['number']
+    let previousPage = currentPage-1
+    let totalPages = data['totalPages']
+    let nextPage = totalPages-1 == currentPage? currentPage : currentPage+1
+
+
+    pagesBtn = ""
+
+    for(i = 0; i < totalPages; i++){
+        isOnPage = currentPage == i
+
+        pagesBtn += "<li class=\"page-item\"><button "+(isOnPage? "disabled": "")+
+            " type=\"button\" class=\"page-link"+(isOnPage? " disabled":"")+"\" onclick=\"get('user/page/"+i+"/size/"+sizes+"', 'UserTable')\">"+i+"</button></li>"
+    }
+
+
+    pagination = "<nav aria-label=\"Page navigation example\">\
+	  <ul class=\"pagination\">\
+		<li class=\"page-item disable\">\
+		  <button "+(previousPage < 0? "disabled": "")+" type=\"button\" class=\"page-link "+(previousPage < 0? "disabled": "")+"\" onclick=\"get('user/page/"+previousPage+"/size/"+sizes+"', 'UserTable')\">Anterior</button>\
+		</li>"
+        +pagesBtn+
+        "<li class=\"page-item\">\
+          <button "+(totalPages-1 == currentPage? "disabled": "")+" type=\"button\" class=\"page-link "+(totalPages-1 == currentPage? "disabled": "")+"\" onclick=\"get('user/page/"+nextPage+"/size/"+sizes+"', 'UserTable')\">Próximo</button>\
+		</li>\
+	  </ul>\
+	</nav>"
+
+    $("#"+elementId)[0].innerHTML = pagination
+}
+
 
 async function CreateUser(){
 	var DataNew = (document.getElementById("ano").value) + '/' + 
     (document.getElementById("mes").value) + '/' + 
     (document.getElementById("dia").value)
 
-    const d = new Date(DataNew);
+    const formBirthDate = new Date(DataNew);
     console.log('body prepare');
+
     var body = {
-        nome: String(document.getElementById("nome").value),
-        email: String(document.getElementById("email").value),
-        documentLegal: String(document.getElementById("documentoLegal").value),
-        aniversario: d,
+        address: {
+            addressId : 0,
+            city: String((document.getElementById("cidade").value)),
+            district:String((document.getElementById("destrito").value)),
+            number: String((document.getElementById("numeroCasa").value)),
+            state: String((document.getElementById("estado").value)),
+            street: String((document.getElementById("rua").value)),
+            zipCode: String((document.getElementById("zip").value)),
+        },
+        birthDate: formBirthDate, //"2022-11-30T20:23:34.319Z",
+        email:String(document.getElementById("email").value),
+        idUser: 0,
+        legalDocument: String(document.getElementById("documentoLegal").value),
+        name: String(document.getElementById("nome").value),
+        password : String((document.getElementById("senha").value)),
         phone1: String((document.getElementById("phone1").value)),
         phone2: String((document.getElementById("phone2").value)),
-        sexo: String((document.getElementById("sexo").value)),
-        estado: String((document.getElementById("estado").value)),
-        cidade: String((document.getElementById("cidade").value)),
-        rua: String((document.getElementById("rua").value)),
-        numeroCasa: String((document.getElementById("numeroCasa").value)),
-        destrito: String((document.getElementById("destrito").value)),
-        zip: String((document.getElementById("zip").value)),
-        senha: String((document.getElementById("senha").value)),
-        acessso: String((document.getElementById("acesso").value))
+        roles: [
+            String((document.getElementById("acesso").value))
+        ],
+        sex: "M" //String((document.getElementById("sexo").value))
+
     }
 
-	if((ValidateCreate(	(document.getElementById("nome").value,
+	if( ValidateCreate(	(document.getElementById("nome").value,
 						document.getElementById("email").value,
 						document.getElementById("documentoLegal").value,
-						d,
+                        document.getElementById("dia").value,
+                        document.getElementById("mes").value,
+                        document.getElementById("ano").value,
 						document.getElementById("phone1").value,
 						document.getElementById("sexo").value,
 						document.getElementById("estado").value,
@@ -86,7 +219,8 @@ async function CreateUser(){
 						document.getElementById("numeroCasa").value,
 						document.getElementById("destrito").value,
 						document.getElementById("zip").value,
-						document.getElementById("senha").value))) == true){
+						document.getElementById("senha").value))
+    ){
 
         urlUser = url + "/user/create";
         const response = await fetch(urlUser, {
@@ -108,10 +242,13 @@ async function CreateUser(){
 
 }
 
-async function ValidateCreate(nome, email, documentLegal, aniversario, phone1, sexo, estado, cidade, rua, numeroCasa, destrito, zip, senha, acesso){
+async function ValidateCreate(nome, email, documentLegal,dia,mes,ano, aniversario, phone1, sexo, estado, cidade, rua, numeroCasa, destrito, zip, senha, acesso){
 	if(nome === null) return false;
 	if(email === null) return false;
 	if(documentLegal === null) return false;
+    if(dia === null) return false;
+    if(mes === null) return false;
+    if(ano === null) return false;
 	if(aniversario === null) return false;
 	if(phone1 === null) return false;
 	if(sexo === null) return false;

@@ -1,5 +1,5 @@
 body {
-    background-image: url("imgs/bg/02.jpg");
+    background-image: url("/src/imgs/bg/02.jpg");
     background-size: cover;
 }
 
@@ -8,5 +8,5 @@ body {
     max-width: 330px;
     padding: 15px;
     margin: 0 auto;
-    background-image: url("imgs/bg/02.jpg");
+    background-image: url("/src/imgs/bg/02.jpg");
 }
