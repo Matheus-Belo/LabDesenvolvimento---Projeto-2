@@ -8,7 +8,7 @@ Professor: Cleiton Silva Tavares
 
 História de Usuário:
 
-Como cliente, eu quero realizar login no sistema para ter acesso aos serviços de aluguel de automóveis.
+Como usuário logado, eu quero realizar login no sistema para ter acesso aos serviços de aluguel de automóveis.
 
 Como cliente, eu quero introduzir um pedido de aluguel de automóvel para poder utilizá-lo em determinado período.
 
@@ -28,6 +28,6 @@ Como agente, eu quero executar o contrato de aluguel de automóvel em caso de av
 
 Como agente do banco, eu quero associar um contrato de crédito a um pedido de aluguel de automóvel para oferecer um financiamento ao cliente.
 
-Como contratante do aluguel, eu quero gerenciar os automóveis disponíveis para aluguel (matrícula, ano, marca, modelo e placa) para colocar para oferta
+Como funcionário, eu quero gerenciar os automóveis disponíveis para aluguel (matrícula, ano, marca, modelo e placa) para colocar para oferta
 
-Como contratante do aluguel, eu quero gerenciar as ofertas de aluguel dos automóveis disponíveis para ter o acompanhamento administrativo
+Como funcionário, eu quero gerenciar as ofertas de aluguel dos automóveis disponíveis para ter o acompanhamento administrativo
