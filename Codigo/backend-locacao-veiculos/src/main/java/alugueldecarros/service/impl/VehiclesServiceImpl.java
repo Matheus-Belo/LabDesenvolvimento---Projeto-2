@@ -9,7 +9,9 @@ import alugueldecarros.models.dto.UserDto;
 import alugueldecarros.service.VehiclesService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
 public class VehiclesServiceImpl implements VehiclesService {
 
 

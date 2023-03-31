@@ -1,8 +1,12 @@
 package alugueldecarros.controller;
 
+import alugueldecarros.models.Rents;
+import alugueldecarros.models.RequestEntity.RentRequest;
 import alugueldecarros.models.RequestEntity.UserRequest;
+import alugueldecarros.models.ResponseEntity.RentsResponse;
 import alugueldecarros.models.User;
 import alugueldecarros.models.dto.UserDto;
+import alugueldecarros.service.RentsService;
 import alugueldecarros.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,98 +27,155 @@ import javax.validation.Valid;
 public class RentsController {
 
     @Autowired
-    private UserService userService;
+    private RentsService rentsService;
 
     @PostMapping(path = "/create")
-    @ApiOperation(value = "Criar novo usuário")
-    //@PreAuthorize("@authorityChecker.isAllowed({'ADMIN','DEF'})")
-    public ResponseEntity<UserDto> createUser(
-            @ApiParam(value = "Json da requisição que contem o dado do usuario a ser salvo")
-            @Valid @RequestBody UserRequest request) throws NotFoundException {
-        UserDto userDto = this.userService.create(request);
+    @ApiOperation(value = "Criar nova Reserva de veículo")
+    //@PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS','THIRDPARTY'})")
+    public ResponseEntity<RentsResponse> createRent(
+            @ApiParam(value = "Json da requisição que contem os dados da reserva a ser criada")
+            @Valid @RequestBody RentRequest request) throws NotFoundException {
+        RentsResponse response = this.rentsService.createRent(request);
         return ResponseEntity.ok().body(
-                userDto
+                response
         );
     }
 
 
-    @PostMapping(path = "/edit")
-    @ApiOperation(value = "Editar usuário existente")
-    public ResponseEntity<UserDto> editUser(
+    @PostMapping(path = "/editRent")
+    @ApiOperation(value = "Editar reserva existente")
+    public ResponseEntity<RentsResponse> editUser(
             @ApiParam(value = "Json da requisição que contem o dado a ser editado")
-            @Valid @RequestBody UserRequest request) throws NotFoundException {
+            @Valid @RequestBody RentRequest request) throws NotFoundException {
 
         return ResponseEntity.ok().body(
-                this.userService.editUser(request)
+                this.rentsService.editRent(request)
         );
     }
 
-//    @Secure({RolesEnum.ADMIN})
-    @DeleteMapping(path = "/delete/{email}")
-    @ApiOperation(value = "Desativa usuário existente")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable(value="email") final String email){
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN'})")
+    @DeleteMapping(path = "/delete/idRent{idRent}")
+    @ApiOperation(value = "Desativa uma reserva existente")
+    public ResponseEntity<RentsResponse> deleteRent(@PathVariable(value="idRent") final Long idRent){
         return ResponseEntity.ok().body(
-                this.userService.deleteUser(email)
-        );
-    }
-
-    @DeleteMapping(path = "/delete")
-    @ApiOperation(value = "Desativa usuário existente")
-    public ResponseEntity<UserDto> deleteLoggedUser(){
-        return ResponseEntity.ok().body(
-                this.userService.deleteLoggedUser()
+                this.rentsService.deleteRent(idRent)
         );
     }
 
 
+    @DeleteMapping(path = "/cancelRent")
+    @ApiOperation(value = "Cancela um pedido do proprio usuario logado (muda o status para cancelada) " +
+            "id solicitante = id vinculado na rent, ou idADMIN")
+    public ResponseEntity<RentsResponse> cancelRent(){
+        return ResponseEntity.ok().body(
+                this.rentsService.cancelRentLoggedUser()
+        );
+    }
+
+
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS','THIRDPARTY'})")
     @GetMapping(path = "/page/{page}/size/{size}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public Page<User> listUsersByPageWithSize(
+    @ApiOperation(value = "Lista todas as reservas página quantidade")
+    public Page<Rents> listRentsByPageWithSize(
             @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
             @PathVariable(value="page")
             int page,
-            @ApiParam(value = "Quantidade de usuários a serem listados por página", example = "10")
+            @ApiParam(value = "Quantidade de reservas a serem listadas por página", example = "10")
             @PathVariable(value="size")
             int size){
 
         Pageable pages = PageRequest.of(page, size);
-        return this.userService.listUsersByPage(pages);
+        return this.rentsService.listRentsByPage(pages);
 
     }
 
-    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','NUTRICIONISTA','PROFESSOR'})")
-    @GetMapping(path = "page/{page}/size/{size}/name/{name}")
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS','THIRDPARTY'})")
+    @GetMapping(path = "page/{page}/size/{size}/status/{status}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public Page<User> listUserByNameAndPageWithSize(
+    @ApiOperation(value = "Lista todas as reservas com status solicitado por página quantidade")
+    public Page<Rents> listRentsByStatusAndPageWithSize(
             @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
             @PathVariable(value="page")
                     int page,
-            @ApiParam(value = "Quantidade de usuários a serem listados por página", example = "10")
+            @ApiParam(value = "Quantidade de reservas a serem listadas por página", example = "10")
             @PathVariable(value="size")
                     int size,
-            @PathVariable(value="name")
-                    String name
+            @PathVariable(value="status")
+                    String status
     ){
 
         Pageable pages = PageRequest.of(page, size);
 
-        return this.userService.listUsersByPageAndName(pages, name);
+        return this.rentsService.listRentsByPageAndStatus(pages, status);
 
     }
 
-    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','NUTRICIONISTA','PROFESSOR'})")
-    @GetMapping(path = "getuserbyid/userId/{userId}")
+    @GetMapping(path = "/pageAllByIdUser/{page}/size/{size}/idUser{idUser}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public ResponseEntity<User> getUserById(
-              @PathVariable(value="userId")
-            Long userId)throws NotFoundException{
+    @ApiOperation(value = "Lista todas as reservas de um usuario página quantidade")
+    public Page<Rents> listRentsByUserAndPageWithSize(
+            @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
+            @PathVariable(value="page")
+            int page,
+            @ApiParam(value = "Quantidade de reservas a serem listadas por página", example = "10")
+            @PathVariable(value="size")
+            int size,
+            @ApiParam(value = "Id Usuario", example = "1")
+            @PathVariable(value="idUser")
+            Long idUser
+    ){
+
+        Pageable pages = PageRequest.of(page, size);
+        return this.rentsService.listRentsByUserAndPage(pages,idUser);
+
+    }
+
+    @GetMapping(path = "/pageAllByIdUserAndStatus/{page}/size/{size}/idUser{idUser}/status/{status}")
+    @ResponseBody
+    @ApiOperation(value = "Lista todas as reservas de um usuario com status solicitado por página quantidade")
+    public Page<Rents> listRentsByStatusAndUserByPageWithSize(
+            @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
+            @PathVariable(value="page")
+            int page,
+            @ApiParam(value = "Quantidade de reservas a serem listadas por página", example = "10")
+            @PathVariable(value="size")
+            int size,
+            @ApiParam(value = "idUser", example = "3")
+            @PathVariable(value="idUser")
+            Long idUser,
+            @ApiParam(value = "Status", example = "CREATED")
+            @PathVariable(value="status")
+            String status
+    ){
+
+        Pageable pages = PageRequest.of(page, size);
+
+        return this.rentsService.listRentsByPageAndStatusAndUser(pages, status, idUser);
+
+    }
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS','THIRDPARTY','CLIENT'})")
+    @GetMapping(path = "getRentByid/idRent/{idRent}")
+    @ResponseBody
+    @ApiOperation(value = "retorna uma Rent por idRent, se for usuario Client, verifica se o id dele está vinculado na reserva")
+    public ResponseEntity<RentsResponse> getRentById(
+              @PathVariable(value="idRent")
+            Long idRent)throws NotFoundException{
 
         return ResponseEntity.ok().body(
-                this.userService.getUserById(userId)
+                this.rentsService.getRentById(idRent)
         );
 
+    }
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS'})")
+    @PostMapping(path = "/changeStatus")
+    @ApiOperation(value = "Muda o status de uma reserva para aprovar, reprovar, agendar")
+    public ResponseEntity<RentsResponse> changeStatus(
+            @ApiParam(value = "Json da requisição que contem o status a ser alterado")
+            @Valid @RequestBody RentRequest request) throws NotFoundException {
+
+        return ResponseEntity.ok().body(
+                this.rentsService.changeStatus(request)
+        );
     }
 }

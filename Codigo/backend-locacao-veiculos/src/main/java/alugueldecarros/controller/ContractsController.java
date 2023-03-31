@@ -1,8 +1,12 @@
 package alugueldecarros.controller;
 
+import alugueldecarros.models.Contracts;
+import alugueldecarros.models.RequestEntity.ContractsRequest;
 import alugueldecarros.models.RequestEntity.UserRequest;
+import alugueldecarros.models.ResponseEntity.ContractsResponse;
 import alugueldecarros.models.User;
 import alugueldecarros.models.dto.UserDto;
+import alugueldecarros.service.ContractsService;
 import alugueldecarros.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,97 +27,85 @@ import javax.validation.Valid;
 public class ContractsController {
 
     @Autowired
-    private UserService userService;
+    private ContractsService contractsService;
 
     @PostMapping(path = "/create")
-    @ApiOperation(value = "Criar novo usuário")
-    //@PreAuthorize("@authorityChecker.isAllowed({'ADMIN','DEF'})")
-    public ResponseEntity<UserDto> createUser(
-            @ApiParam(value = "Json da requisição que contem o dado do usuario a ser salvo")
-            @Valid @RequestBody UserRequest request) throws NotFoundException {
-        UserDto userDto = this.userService.create(request);
+    @ApiOperation(value = "Criar um novo contrato para atrelar a uma RENT")
+    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','FINANCIAL','SELLERS','THIRDPARTY'})")
+    public ResponseEntity<ContractsResponse> createContract(
+            @ApiParam(value = "Json da requisição que contem o dado do contrato a ser salvo")
+            @Valid @RequestBody ContractsRequest request) throws NotFoundException {
+        ContractsResponse response = this.contractsService.createContract(request);
         return ResponseEntity.ok().body(
-                userDto
+                response
         );
     }
-
 
     @PostMapping(path = "/edit")
-    @ApiOperation(value = "Editar usuário existente")
-    public ResponseEntity<UserDto> editUser(
-            @ApiParam(value = "Json da requisição que contem o dado a ser editado")
-            @Valid @RequestBody UserRequest request) throws NotFoundException {
+    @ApiOperation(value = "Editar contrato existente")
+    public ResponseEntity<ContractsResponse> editContract(
+            @ApiParam(value = "Json da requisição que contem o dado do contrato ser editado")
+            @Valid @RequestBody ContractsRequest request) throws NotFoundException {
 
         return ResponseEntity.ok().body(
-                this.userService.editUser(request)
+                this.contractsService.editContract(request)
         );
     }
 
-//    @Secure({RolesEnum.ADMIN})
-    @DeleteMapping(path = "/delete/{email}")
-    @ApiOperation(value = "Desativa usuário existente")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable(value="email") final String email){
+    @DeleteMapping(path = "/delete/idContract{idContract}")
+    @ApiOperation(value = "Desativa o contrato com este id existente em uma rent")
+    public ResponseEntity<ContractsResponse> deleteContract(@PathVariable(value="idContract") final Long idContract){
         return ResponseEntity.ok().body(
-                this.userService.deleteUser(email)
+                this.contractsService.deleteContract(idContract)
         );
     }
-
-    @DeleteMapping(path = "/delete")
-    @ApiOperation(value = "Desativa usuário existente")
-    public ResponseEntity<UserDto> deleteLoggedUser(){
-        return ResponseEntity.ok().body(
-                this.userService.deleteLoggedUser()
-        );
-    }
-
 
     @GetMapping(path = "/page/{page}/size/{size}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public Page<User> listUsersByPageWithSize(
+    @ApiOperation(value = "Lista contratos por página e quantidade")
+    public Page<Contracts> listContractsByPageWithSize(
             @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
             @PathVariable(value="page")
             int page,
-            @ApiParam(value = "Quantidade de usuários a serem listados por página", example = "10")
+            @ApiParam(value = "Quantidade de contratos a serem listados por página", example = "10")
             @PathVariable(value="size")
             int size){
 
         Pageable pages = PageRequest.of(page, size);
-        return this.userService.listUsersByPage(pages);
+        return this.contractsService.listContractsByPage(pages);
 
     }
 
-    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','NUTRICIONISTA','PROFESSOR'})")
-    @GetMapping(path = "page/{page}/size/{size}/name/{name}")
+
+    @GetMapping(path = "page/{page}/size/{size}/idRent/{idRent}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public Page<User> listUserByNameAndPageWithSize(
+    @ApiOperation(value = "Lista todos os contratos de uma RENT por página quantidade")
+    public Page<Contracts> listContractsByIdRentAndPageWithSize(
             @ApiParam(value = "Página que deseja visualizar iniciando em 0", example = "0")
             @PathVariable(value="page")
                     int page,
-            @ApiParam(value = "Quantidade de usuários a serem listados por página", example = "10")
+            @ApiParam(value = "Quantidade de contratos a serem listados por página", example = "10")
             @PathVariable(value="size")
                     int size,
-            @PathVariable(value="name")
-                    String name
+            @PathVariable(value="idRent")
+                    Long idRent
     ){
 
         Pageable pages = PageRequest.of(page, size);
 
-        return this.userService.listUsersByPageAndName(pages, name);
+        return this.contractsService.listContractsByPageAndIdRents(pages, idRent);
 
     }
 
-    @PreAuthorize("@authorityChecker.isAllowed({'ADMIN','NUTRICIONISTA','PROFESSOR'})")
-    @GetMapping(path = "getuserbyid/userId/{userId}")
+    @GetMapping(path = "getContractById/idContract/{idContract}")
     @ResponseBody
-    @ApiOperation(value = "Lista usuários por página quantidade")
-    public ResponseEntity<User> getUserById(
-              @PathVariable(value="userId")
-            Long userId)throws NotFoundException{
+    @ApiOperation(value = "Retorna um contrato por idContract")
+    public ResponseEntity<ContractsResponse> getContractById(
+              @PathVariable(value="idContract")
+            Long idContract)throws NotFoundException{
 
         return ResponseEntity.ok().body(
-                this.userService.getUserById(userId)
+                this.contractsService.getContractById(idContract)
         );
 
     }

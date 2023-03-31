@@ -29,8 +29,6 @@ public class VehiclesController {
     @Autowired
     private VehiclesService vehiclesService;
 
-    @Autowired
-    private UserService userService;
 
     @PostMapping(path = "/create")
     @ApiOperation(value = "Criar novo veiculo")
