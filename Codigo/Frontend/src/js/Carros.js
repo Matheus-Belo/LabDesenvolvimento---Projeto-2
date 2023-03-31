@@ -1,6 +1,6 @@
 let url = "http://localhost:9999";
 let token = localStorage.getItem('token');
-let user = [];
+let cars = [];
 const API_URL = 'http://localhost:9999/'
 const sizes = 10;
 var currentPage = 0;
@@ -12,13 +12,13 @@ var idSelecionado = -1;
 
 $(document).ready(function() {
 
-    searchAllUsers()
+    searchAllVehicles()
 
 });
-function searchAllUsers(){
+function searchAllVehicles(){
 
-    let path = 'user/page/0/size/10/'
-    get(path,'UserTable');
+    let path = 'vehicles/page/0/size/10/'
+    get(path,'CarTable');
 }
 
 // METODOS PARA CHAMAR ROTA VIA AJAX
@@ -57,11 +57,11 @@ function callRoute(path, route_type, body, elementId, completeFunction){
                     showContentIn(data.responseJSON, elementId)
                     showPagination(data.responseJSON, "Pagination", path)
                     break;
-                case 2: //LIVROS
+                case 2: //CARROS
 
                     savedData = data.responseJSON
-                    showContentBookSearch(data.responseJSON, elementId)
-                    showPaginationBookSeach(data.responseJSON, elementId, path)
+                    showContentInCars(data.responseJSON, elementId)
+                    showPaginationCarsSearch(data.responseJSON, elementId, path)
 
 
                     break;
@@ -79,7 +79,7 @@ function callRoute(path, route_type, body, elementId, completeFunction){
 function get(path, elementId){
 
 
-    callRoute(API_URL+path, 'GET', undefined, elementId,1)
+    callRoute(API_URL+path, 'GET', undefined, elementId,2)
 
 }
 
@@ -90,18 +90,19 @@ function post(path, body, elementId){
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Montar tabela no HTML com JS para usuarios
-function showContentIn(data, elementId){
+function showContentInCars(data, elementId){
     table =
         "	<div>\
-              <table class=\"table table-striped border mt-lg-4\">\
+              <table class=\"table table-striped\">\
                 <thead>\
                   <tr>\
                     <th scope=\"col\">#</th>\
                     <th scope=\"col\">Nome</th>\
-                    <th scope=\"col\">Email</th>\
+                    <th scope=\"col\">Chassi</th>\
+                    <th scope=\"col\">Placa</th>\
                     <th scope=\"col\">Documento Legal</th>\
-                    <th scope=\"col\">Telefone</th>\
-                    <th scope=\"col\">Editar Cadastro</th>\
+                    <th scope=\"col\">Ano de Fabricação</th>\
+                    <th scope=\"col\">Fabricante</th>\
                     <th scope=\"col\">Verifica Solicitações</th>\
                   </tr>\
                 </thead>\
@@ -121,33 +122,34 @@ function getTableBody(content){
     tableBody = "";
     listOfTableContent = content
     for(i = 0; i < content.length; i++){
-        tableBody +=  "<tr onclick='PickedUser("+content[i]['idUser']+", this)'>\
+        tableBody +=  "<tr onclick='PickedUser("+content[i]['idVehicle']+", this)'>\
 			<th scope=\"row\">"
-            +content[i]['idUser']+
+            +content[i]['idVehicle']+
             "</th>\
             <td>"+content[i]['name']+"</td>\
-			<td>"+content[i]['email']+"</td>\
-			<td>"+content[i]['legal_document']+"</td>\
-			<td>"+content[i]['phone1']+"</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Editar</button>\</td>\
+            <td>"+content[i]['chassi']+"</td>\
+            <td>"+content[i]['licensePlate']+"</td>\
+			<td>"+content[i]['legalDocument']+"</td>\
+			<td>"+content[i]['manufacturedYear']+"</td>\
+			<td>"+content[i]['manufacturer']+"</td>\
 			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
 		  </tr>"
     }
     return tableBody;
 }
 
-async function PickedUser(id ,row){
+async function PickedVehicle(id, row){
     if (highlightedRow) {
         highlightedRow.classList.remove("highlight");
       }
       row.classList.add("highlight");
       highlightedRow = row;
       idSelecionado = id;
-      getUserById(id);
+      getVehicleById(id);
 }
 
 //Montar botoes de paginação
-function showPagination(data, elementId, path){
+function showPaginationCarsSearch(data, elementId, path){
     console.log("paginação")
     console.log(data, elementId, path)
 
@@ -183,57 +185,28 @@ function showPagination(data, elementId, path){
 }
 
 
-async function CreateUser(){
-	var DataNew = (document.getElementById("ano").value) + '/' + 
-    (document.getElementById("mes").value) + '/' + 
-    (document.getElementById("dia").value)
-
-    const formBirthDate = new Date(DataNew);
+async function CreateVehicle(){
     console.log('body prepare');
 
     var body = {
-        address: {
-            addressId : 0,
-            city: String((document.getElementById("cidade").value)),
-            district:String((document.getElementById("destrito").value)),
-            number: String((document.getElementById("numeroCasa").value)),
-            state: String((document.getElementById("estado").value)),
-            street: String((document.getElementById("rua").value)),
-            zipCode: String((document.getElementById("zip").value)),
-        },
-        birthDate: formBirthDate, //"2022-11-30T20:23:34.319Z",
-        email:String(document.getElementById("email").value),
-        idUser: 0,
+        chassi: String(document.getElementById("chassi")),
+        idVehicle: 0,
         legalDocument: String(document.getElementById("documentoLegal").value),
+        licensePlate : String((document.getElementById("placa").value)),
+        manufacturedYear: String((document.getElementById("manufacturedYear").value)),
+        manufacturer: String((document.getElementById("manufacturer").value)),
         name: String(document.getElementById("nome").value),
-        password : String((document.getElementById("senha").value)),
-        phone1: String((document.getElementById("phone1").value)),
-        phone2: String((document.getElementById("phone2").value)),
-        roles: [
-            String((document.getElementById("acesso").value))
-        ],
-        sex: "M" //String((document.getElementById("sexo").value))
-
     }
 
-	if( ValidateCreate(	(document.getElementById("nome").value,
-						document.getElementById("email").value,
+	if( ValidateCreate(	(document.getElementById("chassi").value,
 						document.getElementById("documentoLegal").value,
-                        document.getElementById("dia").value,
-                        document.getElementById("mes").value,
-                        document.getElementById("ano").value,
-						document.getElementById("phone1").value,
-						document.getElementById("sexo").value,
-						document.getElementById("estado").value,
-						document.getElementById("cidade").value,
-						document.getElementById("rua").value,
-						document.getElementById("numeroCasa").value,
-						document.getElementById("destrito").value,
-						document.getElementById("zip").value,
-						document.getElementById("senha").value))
+						document.getElementById("placa").value,
+                        document.getElementById("manufacturedYear").value,
+                        document.getElementById("manufacturer").value,
+                        document.getElementById("nome").value))
     ){
 
-        urlUser = url + "/user/create";
+        urlUser = url + "/vehicles/create";
         const response = await fetch(urlUser, {
             method: "POST",
             headers: {
@@ -253,30 +226,19 @@ async function CreateUser(){
 
 }
 
-async function ValidateCreate(nome, email, documentLegal,dia,mes,ano, aniversario, phone1, sexo, estado, cidade, rua, numeroCasa, destrito, zip, senha, acesso){
-	if(nome === null) return false;
-	if(email === null) return false;
-	if(documentLegal === null) return false;
-    if(dia === null) return false;
-    if(mes === null) return false;
-    if(ano === null) return false;
-	if(aniversario === null) return false;
-	if(phone1 === null) return false;
-	if(sexo === null) return false;
-	if(estado === null) return false;
-	if(cidade === null) return false;
-	if(rua === null) return false;
-	if(numeroCasa === null) return false;
-	if(destrito === null) return false;
-	if(zip === null) return false;
-	if(senha === null) return false;
-    if(acesso === null) return false;
+async function ValidateCreate(chassi, documentoLegal, placa, manufacturedYear, manufacturer, nome){
+	if(chassi === null) return false;
+	if(documentoLegal === null) return false;
+	if(placa === null) return false;
+    if(manufacturedYear === null) return false;
+    if(manufacturer === null) return false;
+    if(nome === null) return false;
 	else return true;
 
 }
 
-async function getUserById(id) {
-    let urlIdUser = url + "/user/getuserbyid/userId/" + id;
+async function getVehicleById(id) {
+    let urlIdUser = url + "/vehicles/getVehicleByid/idVehicle/" + id;
 
     const response = await fetch(urlIdUser, {
         method: "GET",
@@ -291,8 +253,4 @@ async function getUserById(id) {
 
     let data = await response.json();
     console.log(data);
-}
-
-async function getTableUsers(){
-
 }
