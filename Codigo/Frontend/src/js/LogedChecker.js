@@ -7,6 +7,7 @@ async function Loged(){
         this.Access();
     }else{
         isLoged += `<a href="login.html" class="btn btn-danger btn active" role="button" aria-pressed="true">Login</a>`
+        this.Access();
     }
 
     document.getElementById("Login").innerHTML = isLoged
