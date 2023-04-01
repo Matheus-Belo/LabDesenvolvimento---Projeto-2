@@ -121,6 +121,8 @@ function getTableBody(content){
     tableBody = "";
     listOfTableContent = content
     for(i = 0; i < content.length; i++){
+        let IDUser = content[i]['idUser']
+        console.log(IDUser)
         tableBody +=  "<tr onclick='PickedUser("+content[i]['idUser']+", this)'>\
 			<th scope=\"row\">"
             +content[i]['idUser']+
@@ -129,7 +131,7 @@ function getTableBody(content){
 			<td>"+content[i]['email']+"</td>\
 			<td>"+content[i]['legal_document']+"</td>\
 			<td>"+content[i]['phone1']+"</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Editar</button>\</td>\
+			<td><button  type=\"button\" class=\"page-link\" onclick=\"DeleteUser("+IDUser+")\">Deletar</button>\</td>\
 			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
 		  </tr>"
     }
@@ -212,7 +214,7 @@ async function CreateUser(){
         roles: [
             String((document.getElementById("acesso").value))
         ],
-        sex: "M" //String((document.getElementById("sexo").value))
+        sex: String((document.getElementById("sexo").value))
 
     }
 
@@ -293,6 +295,10 @@ async function getUserById(id) {
     console.log(data);
 }
 
-async function getTableUsers(){
-
+async function DeleteUser(id){
+    let text = "Você tem certeza que deseja deletar esse usuario?";
+    let SureRequest = false;
+  if (confirm(text) == true) {
+    
+  } 
 }
