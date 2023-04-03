@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RentsRepository extends JpaRepository<Rents,Long> {
 
+    Rents findOneByIdRentAndDeletedAtIsNull(Long idRent);
 }

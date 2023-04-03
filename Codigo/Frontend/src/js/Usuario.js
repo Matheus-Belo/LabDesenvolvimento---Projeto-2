@@ -8,6 +8,7 @@ var listOfTableContent = []
 var savedData
 var highlightedRow = null;
 var idSelecionado = -1;
+var actualId;
 
 
 $(document).ready(function() {
@@ -87,6 +88,13 @@ function post(path, body, elementId){
     callRoute(API_URL+path, 'POST', body)
 }
 
+function callRouteDeleteUser(path){
+
+
+    callRoute(API_URL+path, 'DELETE', undefined, elementId,1)
+
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Montar tabela no HTML com JS para usuarios
@@ -101,8 +109,8 @@ function showContentIn(data, elementId){
                     <th scope=\"col\">Email</th>\
                     <th scope=\"col\">Documento Legal</th>\
                     <th scope=\"col\">Telefone</th>\
+                    <th scope=\"col\">Deletar Usuario</th>\
                     <th scope=\"col\">Editar Cadastro</th>\
-                    <th scope=\"col\">Verifica Solicitações</th>\
                   </tr>\
                 </thead>\
                 <tbody>"+
@@ -121,8 +129,12 @@ function getTableBody(content){
     tableBody = "";
     listOfTableContent = content
     for(i = 0; i < content.length; i++){
-        let IDUser = content[i]['idUser']
-        console.log(IDUser)
+        let idUser = content[i]['idUser']
+        let email  = content[i]['email']
+        console.log(idUser)
+
+        /*onclick='PickedUser("+content[i]['idUser']+", this)'>*/
+
         tableBody +=  "<tr onclick='PickedUser("+content[i]['idUser']+", this)'>\
 			<th scope=\"row\">"
             +content[i]['idUser']+
@@ -131,9 +143,9 @@ function getTableBody(content){
 			<td>"+content[i]['email']+"</td>\
 			<td>"+content[i]['legal_document']+"</td>\
 			<td>"+content[i]['phone1']+"</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"DeleteUser("+IDUser+")\">Deletar</button>\</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
-		  </tr>"
+			<td><button type=\"button\" class=\"page-link\" onclick=\"deleteUser('"+content[i]['email']+"')\">Deletar</button>\</td>\
+			<td><a class=\"page-link\" data-bs-toggle=\"collapse\" href=\"#CreateUser\" role=\"button\" aria-expanded=\"false\" aria-controls=\"CreateUser\">Editar Usuário</a>\
+			</tr>"
     }
     return tableBody;
 }
@@ -277,28 +289,109 @@ async function ValidateCreate(nome, email, documentLegal,dia,mes,ano, aniversari
 
 }
 
-async function getUserById(id) {
-    let urlIdUser = url + "/user/getuserbyid/userId/" + id;
+    async function getUserById(id) {
+        let urlIdUser = url + "/user/getuserbyid/userId/" + id;
 
-    const response = await fetch(urlIdUser, {
-        method: "GET",
-        headers: {
-            'host': 'localhost:9999',
+        const response = await fetch(urlIdUser, {
+            method: "GET",
+            headers: {
+                'host': 'localhost:9999',
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/JSON',
+                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+                    'authorization': 'Bearer ' + token
+            }
+        });
+
+        actualId = await response.json();
+        console.log(data);
+    }
+
+    function deleteUser(email){
+        let text = "Você tem certeza que deseja deletar esse usuario?";
+        let SureRequest = false;
+        let path = 'user/delete/' + email;
+
+        if (confirm(text) == true ) {
+            console.log(path);
+            callRoute(API_URL+path, 'DELETE', undefined, undefined,1)
+
+        }else{
+
+        }
+    }
+
+async function editUser(){
+    let dataNew = (document.getElementById("ano").value) + '/' +
+        (document.getElementById("mes").value) + '/' +
+        (document.getElementById("dia").value)
+
+    let formBirthDate = new Date(dataNew);
+    console.log('body prepare');
+
+    var body = {
+        address: {
+            addressId : actualId.address.addressId,
+            city: String((document.getElementById("cidade").value)),
+            district:String((document.getElementById("destrito").value)),
+            number: String((document.getElementById("numeroCasa").value)),
+            state: String((document.getElementById("estado").value)),
+            street: String((document.getElementById("rua").value)),
+            zipCode: String((document.getElementById("zip").value)),
+        },
+        birthDate: formBirthDate, //"2022-11-30T20:23:34.319Z",
+        email:String(document.getElementById("email").value),
+        idUser: actualId.idUser,
+        legalDocument: String(document.getElementById("documentoLegal").value),
+        name: String(document.getElementById("nome").value),
+        password : String((document.getElementById("senha").value)),
+        phone1: String((document.getElementById("phone1").value)),
+        phone2: String((document.getElementById("phone2").value)),
+        roles: [
+            String((document.getElementById("acesso").value))
+        ],
+        sex: String((document.getElementById("sexo").value))
+
+    }
+
+    if( ValidateCreate(	(document.getElementById("nome").value,
+        document.getElementById("email").value,
+        document.getElementById("documentoLegal").value,
+        document.getElementById("dia").value,
+        document.getElementById("mes").value,
+        document.getElementById("ano").value,
+        document.getElementById("phone1").value,
+        document.getElementById("sexo").value,
+        document.getElementById("estado").value,
+        document.getElementById("cidade").value,
+        document.getElementById("rua").value,
+        document.getElementById("numeroCasa").value,
+        document.getElementById("destrito").value,
+        document.getElementById("zip").value,
+        document.getElementById("senha").value))
+    ){
+
+        urlUser = url + "/user/edit";
+        const response = await fetch(urlUser, {
+            method: "POST",
+            headers: {
+                'host': 'localhost:9999',
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/JSON',
                 "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
                 'authorization': 'Bearer ' + token
-        }
-    });
+            },
+            body: JSON.stringify(body)
+        });
+        alert("Editado com sucesso!");
+        console.log(data);
+    }else{
+        alert("Um ou mais campos vazios");
+    }
 
-    let data = await response.json();
-    console.log(data);
 }
 
-async function DeleteUser(id){
-    let text = "Você tem certeza que deseja deletar esse usuario?";
-    let SureRequest = false;
-  if (confirm(text) == true) {
-    
-  } 
-}
+    function add(index){
+
+
+    }

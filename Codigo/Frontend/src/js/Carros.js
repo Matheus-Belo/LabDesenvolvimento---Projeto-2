@@ -18,7 +18,7 @@ $(document).ready(function() {
 function searchAllVehicles(){
 
     let path = 'vehicles/page/0/size/10/'
-    get(path,'CarTable');
+    get(path,'carTableRegister');
 }
 
 // METODOS PARA CHAMAR ROTA VIA AJAX
@@ -61,7 +61,7 @@ function callRoute(path, route_type, body, elementId, completeFunction){
 
                     savedData = data.responseJSON
                     showContentInCars(data.responseJSON, elementId)
-                    showPaginationCarsSearch(data.responseJSON, elementId, path)
+                    showPaginationCarsSearch(data.responseJSON, 'carPagination', path)
 
 
                     break;
@@ -91,7 +91,7 @@ function post(path, body, elementId){
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Montar tabela no HTML com JS para usuarios
 function showContentInCars(data, elementId){
-    table =
+    let carTable =
         "	<div>\
               <table class=\"table table-striped\">\
                 <thead>\
@@ -114,15 +114,15 @@ function showContentInCars(data, elementId){
     </div>\
 "
 
-    $("#"+elementId)[0].innerHTML = table
+    $("#"+elementId)[0].innerHTML = carTable
 }
 
 
 function getTableBody(content){
-    tableBody = "";
-    listOfTableContent = content
+     let carTableBody = "";
+    //listOfTableContent = content
     for(i = 0; i < content.length; i++){
-        tableBody +=  "<tr onclick='PickedUser("+content[i]['idVehicle']+", this)'>\
+        carTableBody +=  "<tr onclick='PickedUser("+content[i]['idVehicle']+", this)'>\
 			<th scope=\"row\">"
             +content[i]['idVehicle']+
             "</th>\
@@ -135,7 +135,7 @@ function getTableBody(content){
 			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
 		  </tr>"
     }
-    return tableBody;
+    return carTableBody;
 }
 
 async function PickedVehicle(id, row){
@@ -165,27 +165,27 @@ function showPaginationCarsSearch(data, elementId, path){
         isOnPage = currentPage == i
 
         pagesBtn += "<li class=\"page-item\"><button "+(isOnPage? "disabled": "")+
-            " type=\"button\" class=\"page-link"+(isOnPage? " disabled":"")+"\" onclick=\"get('user/page/"+i+"/size/"+sizes+"', 'UserTable')\">"+i+"</button></li>"
+            " type=\"button\" class=\"page-link"+(isOnPage? " disabled":"")+"\" onclick=\"get('vehicles/page/"+i+"/size/"+sizes+"', 'carTableRegister')\">"+i+"</button></li>"
     }
 
 
-    pagination = "<nav aria-label=\"Page navigation example\">\
+    carpagination = "<nav aria-label=\"Page navigation example\">\
 	  <ul class=\"pagination\">\
 		<li class=\"page-item disable\">\
-		  <button "+(previousPage < 0? "disabled": "")+" type=\"button\" class=\"page-link "+(previousPage < 0? "disabled": "")+"\" onclick=\"get('user/page/"+previousPage+"/size/"+sizes+"', 'UserTable')\">Anterior</button>\
+		  <button "+(previousPage < 0? "disabled": "")+" type=\"button\" class=\"page-link "+(previousPage < 0? "disabled": "")+"\" onclick=\"get('vehicles/page/"+previousPage+"/size/"+sizes+"', 'carTableRegister')\">Anterior</button>\
 		</li>"
         +pagesBtn+
         "<li class=\"page-item\">\
-          <button "+(totalPages-1 == currentPage? "disabled": "")+" type=\"button\" class=\"page-link "+(totalPages-1 == currentPage? "disabled": "")+"\" onclick=\"get('user/page/"+nextPage+"/size/"+sizes+"', 'UserTable')\">Próximo</button>\
+          <button "+(totalPages-1 == currentPage? "disabled": "")+" type=\"button\" class=\"page-link "+(totalPages-1 == currentPage? "disabled": "")+"\" onclick=\"get('vehicles/page/"+nextPage+"/size/"+sizes+"', 'carTableRegister')\">Próximo</button>\
 		</li>\
 	  </ul>\
 	</nav>"
 
-    $("#"+elementId)[0].innerHTML = pagination
+    $("#"+elementId)[0].innerHTML = carpagination
 }
 
 
-async function CreateVehicle(){
+async function createVehicle(){
     console.log('body prepare');
 
     var body = {
@@ -196,7 +196,10 @@ async function CreateVehicle(){
         manufacturedYear: String((document.getElementById("manufacturedYear").value)),
         manufacturer: String((document.getElementById("manufacturer").value)),
         name: String(document.getElementById("nome").value),
+
+
     }
+
 
 	if( ValidateCreate(	(document.getElementById("chassi").value,
 						document.getElementById("documentoLegal").value,

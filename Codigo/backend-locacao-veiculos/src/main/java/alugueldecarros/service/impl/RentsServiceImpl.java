@@ -2,18 +2,37 @@ package alugueldecarros.service.impl;
 
 import alugueldecarros.models.Rents;
 import alugueldecarros.models.RequestEntity.RentRequest;
+import alugueldecarros.models.RequestEntity.VehiclesRequest;
 import alugueldecarros.models.ResponseEntity.RentsResponse;
+import alugueldecarros.models.ResponseEntity.VehiclesResponse;
+import alugueldecarros.models.Vehicles;
+import alugueldecarros.repository.RentsRepository;
 import alugueldecarros.service.RentsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NonUniqueResultException;
+import java.util.Optional;
+
 @Service
 public class RentsServiceImpl implements RentsService {
-
+    @Autowired
+    RentsRepository rentsRepository;
     @Override
     public RentsResponse createRent(RentRequest request) {
-        return null;
+        Optional<Rents> rent = Optional.ofNullable(this.rentsRepository.findOneByIdRentAndDeletedAtIsNull(request.getIdRent()));
+
+        if(!rent.isPresent()){
+            return RentsResponse.fromRents(
+                    this.rentsRepository.save(
+                            RentRequest.toRents(request)
+                    )
+            );
+        }else{
+            throw new NonUniqueResultException("Veiculo ja cadastrado!");
+        }
     }
 
     @Override
