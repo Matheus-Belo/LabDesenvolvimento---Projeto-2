@@ -122,6 +122,8 @@ function getTableBody(content){
     tableBody = "";
     listOfTableContent = content
     for(i = 0; i < content.length; i++){
+        let idCar = content[i]['idVehicle']
+
         tableBody +=  "<tr onclick='PickedUser("+content[i]['idVehicle']+", this)'>\
 			<th scope=\"row\">"
             +content[i]['idVehicle']+
@@ -132,7 +134,7 @@ function getTableBody(content){
 			<td>"+content[i]['legalDocument']+"</td>\
 			<td>"+content[i]['manufacturedYear']+"</td>\
 			<td>"+content[i]['manufacturer']+"</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"\">Solicitações</button>\</td>\
+			<td><button  type=\"button\" class=\"page-link\" onclick=\"Alugar(" + idCar + ")\">Alugar</button>\</td>\
 		  </tr>"
     }
     return tableBody;
@@ -253,4 +255,16 @@ async function getVehicleById(id) {
 
     let data = await response.json();
     console.log(data);
+}
+
+async function Alugar(idCar){
+    if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
+        window.location.replace("aluguelCarro.html/CarID="+idCar)
+    }else{
+        alert("Você precisa fazer uma conta para alugar um carro")
+    }
+}
+
+async function TestAlugar(){
+    window.location.replace("aluguelCarro.html?CarID="+0)
 }

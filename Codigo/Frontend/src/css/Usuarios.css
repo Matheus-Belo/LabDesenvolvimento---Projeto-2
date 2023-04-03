@@ -6,10 +6,6 @@
     align-items: center;
   }
 
-  .highlight {
-    background-color: rgb(24, 162, 209);
-  }
-
 .centraliza {
     display: flex;
     justify-content: center;
