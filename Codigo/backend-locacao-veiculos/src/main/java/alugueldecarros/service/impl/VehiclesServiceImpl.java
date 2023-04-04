@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
+import java.util.LinkedList;
 import java.util.Optional;
 
 @Service
@@ -66,5 +67,10 @@ public class VehiclesServiceImpl implements VehiclesService {
         return VehiclesResponse.fromVehicles(
                 this.vehiclesRepository.findOneByIdVehicleAndDeletedAtIsNull(idVehicle)
         );
+    }
+
+    @Override
+    public LinkedList<Vehicles> getAllVehiclesToList() {
+        return (LinkedList<Vehicles>) vehiclesRepository.findAll();
     }
 }
