@@ -8,6 +8,7 @@ var listOfTableContent = []
 var savedData
 var highlightedRow = null;
 var idSelecionado = -1;
+var VehicleID
 
 
 $(document).ready(function() {
@@ -87,31 +88,42 @@ function post(path, body, elementId){
     callRoute(API_URL+path, 'POST', body)
 }
 
+function callRouteDeleteUser(path){
+
+
+    callRoute(API_URL+path, 'DELETE', undefined, elementId,2)
+
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Montar tabela no HTML com JS para usuarios
 function showContentInCars(data, elementId){
-    let carTable =
-        "	<div>\
-              <table class=\"table table-striped\">\
-                <thead>\
-                  <tr>\
-                    <th scope=\"col\">#</th>\
-                    <th scope=\"col\">Nome</th>\
-                    <th scope=\"col\">Chassi</th>\
-                    <th scope=\"col\">Placa</th>\
-                    <th scope=\"col\">Documento Legal</th>\
-                    <th scope=\"col\">Ano de Fabricação</th>\
-                    <th scope=\"col\">Fabricante</th>\
-                    <th scope=\"col\">Verifica Solicitações</th>\
-                  </tr>\
-                </thead>\
-                <tbody>"+
-        getTableBody(data.content)
-        +
-        "</tbody>\
-      </table>\
-    </div>\
+    let carTable ="	<div class=\"row \">\
+                        <div class=\"col-auto\">\
+                            <div>\
+                            <table class=\"table align-middle text-center table-hover table-responsive table-bordered table-striped\">\
+                                <thead>\
+                                <tr>\
+                                    <th scope=\"col\">#</th>\
+                                    <th scope=\"col\">Nome</th>\
+                                    <th scope=\"col\">Chassi</th>\
+                                    <th scope=\"col\">Placa</th>\
+                                    <th scope=\"col\">Documento Legal</th>\
+                                    <th scope=\"col\">Ano de Fabricação</th>\
+                                    <th scope=\"col\">Fabricante</th>\
+                                    <th scope=\"col\">Verifica Solicitações</th>\
+                                    <th scope=\"col\">Deletar</th>\
+                                </tr>\
+                                </thead>\
+                                <tbody>"+
+                        getTableBody(data.content)
+                        +
+                        "</tbody>\
+                    </table>\
+                </div>\
+            </div>\
+        </div>\
 "
 
     $("#"+elementId)[0].innerHTML = carTable
@@ -123,17 +135,16 @@ function getTableBody(content){
     //listOfTableContent = content
     for(i = 0; i < content.length; i++){
         let idCar = content[i]['idVehicle']
-        carTableBody +=  "<tr onclick='PickedUser("+content[i]['idVehicle']+", this)'>\
-			<th scope=\"row\">"
-            +content[i]['idVehicle']+
-            "</th>\
-            <td>"+content[i]['name']+"</td>\
+        carTableBody +=  "<tr onclick='PickedVehicle("+content[i]['idVehicle']+", this)'>\
+            <td class=\"align-middle fw-bolder\" >"+content[i]['idVehicle']+"</td>\
+            <td id=\"Name\">"+content[i]['name']+"</td>\
             <td>"+content[i]['chassi']+"</td>\
             <td>"+content[i]['licensePlate']+"</td>\
 			<td>"+content[i]['legalDocument']+"</td>\
-			<td>"+content[i]['manufacturedYear']+"</td>\
+			<td id=\"ManufacturedYear\">"+content[i]['manufacturedYear']+"</td>\
 			<td>"+content[i]['manufacturer']+"</td>\
-			<td><button  type=\"button\" class=\"page-link\" onclick=\"Alugar(" + idCar + ")\">Alugar</button>\</td>\
+			<td><button type=\"button\" class=\"page-link\" onclick=\"VerifyAccessToAlugar(" + content[i]['idVehicle'] +")\">Alugar</button>\</td>\
+            <td><button type=\"button\" class=\"page-link\" onclick=\"DeleteVehicle(" + content[i]['idVehicle'] +")\">Delete</button>\</td>\
 		  </tr>"
     }
     return carTableBody;
@@ -142,11 +153,11 @@ function getTableBody(content){
 async function PickedVehicle(id, row){
     if (highlightedRow) {
         highlightedRow.classList.remove("highlight");
-      }
-      row.classList.add("highlight");
-      highlightedRow = row;
-      idSelecionado = id;
-      getVehicleById(id);
+    }
+        row.classList.add("highlight");
+        highlightedRow = row;
+        idSelecionado = id;
+        getVehicleById(id);
 }
 
 //Montar botoes de paginação
@@ -190,7 +201,7 @@ async function createVehicle(){
     console.log('body prepare');
 
     var body = {
-        chassi: String(document.getElementById("chassi")),
+        chassi: String(document.getElementById("chassi").value),
         idVehicle: 0,
         legalDocument: String(document.getElementById("documentoLegal").value),
         licensePlate : String((document.getElementById("placa").value)),
@@ -255,13 +266,18 @@ async function getVehicleById(id) {
         }
     });
 
-    let data = await response.json();
-    console.log(data);
+    VehicleID = await response.json();
+    document.getElementById("nome").value = VehicleID['name'];
+    document.getElementById("chassi").value = VehicleID['chassi'];
+    document.getElementById("documentoLegal").value = VehicleID['legalDocument'];
+    document.getElementById("placa").value = VehicleID['licensePlate'];
+    document.getElementById("manufacturedYear").value = VehicleID['manufacturedYear'];
+    document.getElementById("manufacturer").value = VehicleID['manufacturer'];
 }
 
 async function Alugar(idCar){
     if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
-        window.location.replace("aluguelCarro.html/CarID="+idCar)
+        window.location.replace("aluguelCarro.html?CarID="+idCar)
     }else{
         alert("Você precisa fazer uma conta para alugar um carro")
     }
@@ -269,4 +285,61 @@ async function Alugar(idCar){
 
 async function TestAlugar(){
     window.location.replace("aluguelCarro.html?CarID="+0)
+}
+
+function DeleteVehicle(id){
+    let text = "Você tem certeza que deseja deletar esse veículo?";
+    let SureRequest = false;
+    let path = 'vehicles/delete/idVehicle' + id;
+
+    if (confirm(text) == true ) {
+        console.log(path);
+        callRoute(API_URL+path, 'DELETE', undefined, undefined,1)
+
+    }else{
+
+    }
+}
+
+async function editVehicle(){
+        console.log('body prepare');
+    
+        var body = {
+            chassi: String(document.getElementById("chassi").value),
+            idVehicle: VehicleID.idVehicle,
+            legalDocument: String(document.getElementById("documentoLegal").value),
+            licensePlate : String((document.getElementById("placa").value)),
+            manufacturedYear: String((document.getElementById("manufacturedYear").value)),
+            manufacturer: String((document.getElementById("manufacturer").value)),
+            name: String(document.getElementById("nome").value),
+    
+        }
+    
+    
+        if( ValidateCreate(	(document.getElementById("chassi").value,
+                            document.getElementById("documentoLegal").value,
+                            document.getElementById("placa").value,
+                            document.getElementById("manufacturedYear").value,
+                            document.getElementById("manufacturer").value,
+                            document.getElementById("nome").value))
+        ){
+    
+            urlUser = url + "/vehicles/edit";
+            const response = await fetch(urlUser, {
+                method: "POST",
+                headers: {
+                    'host': 'localhost:9999',
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/JSON',
+                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+                    'authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(body)
+            });
+            alert("Veículo editado com sucesso!");
+         }else{
+            alert("Um ou mais campos vazios");
+        }
+    
+    
 }

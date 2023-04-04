@@ -48,7 +48,10 @@ async function Loged(){
 }
 
 async function LogOut(){
-    localStorage.removeItem('token');
+  localStorage.removeItem('token');
+  localStorage.removeItem('UserID');
+  location.reload();
+  window.location.href("index.html");
 }
 
 async function VerifyAccessToCars(){
@@ -59,9 +62,9 @@ async function VerifyAccessToCars(){
     }
 }
 
-async function VerifyAccessToAlugar(){
+async function VerifyAccessToAlugar(CarID){
   if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
-      window.location.replace("aluguelCarro.html")
+      window.location.replace("aluguelCarro.html?CarID=" + CarID)
   }else{
       alert("Você precisa estar logado para fazer isso!!!!")
   }

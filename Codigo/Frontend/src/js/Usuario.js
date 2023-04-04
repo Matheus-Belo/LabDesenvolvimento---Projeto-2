@@ -101,7 +101,7 @@ function callRouteDeleteUser(path){
 function showContentIn(data, elementId){
     table =
         "	<div>\
-              <table class=\"table table-striped border mt-lg-4\">\
+              <table class=\"table align-middle text-center table-hover table-responsive table-bordered table-striped mt-lg-4\">\
                 <thead>\
                   <tr>\
                     <th scope=\"col\">#</th>\
@@ -136,9 +136,7 @@ function getTableBody(content){
         /*onclick='PickedUser("+content[i]['idUser']+", this)'>*/
 
         tableBody +=  "<tr onclick='PickedUser("+content[i]['idUser']+", this)'>\
-			<th scope=\"row\">"
-            +content[i]['idUser']+
-            "</th>\
+            <td class=\"align-middle fw-bolder\" >"+content[i]['idUser']+"</td>\
             <td>"+content[i]['name']+"</td>\
 			<td>"+content[i]['email']+"</td>\
 			<td>"+content[i]['legal_document']+"</td>\
@@ -260,7 +258,6 @@ async function CreateUser(){
             body: JSON.stringify(body)
         });
         alert("Cadastro registrado com sucesso!");
-		console.log(data);
 	 }else{
 		alert("Um ou mais campos vazios");
 	}
@@ -304,22 +301,39 @@ async function ValidateCreate(nome, email, documentLegal,dia,mes,ano, aniversari
         });
 
         actualId = await response.json();
-        console.log(data);
+        console.log(actualId)
+        document.getElementById("nome").value = actualId.name
+        document.getElementById("email").value = actualId.email
+        document.getElementById("senha").value = ""
+        document.getElementById("phone1").value = actualId.phone1
+        document.getElementById("phone2").value = actualId.phone2
+        document.getElementById("cidade").value = actualId.address.city.city
+        document.getElementById("destrito").value = actualId.address.district
+        document.getElementById("numeroCasa").value = actualId.address.number
+        document.getElementById("rua").value = actualId.address.street
+        document.getElementById("zip").value = actualId.address.zipCode
+        document.getElementById("documentoLegal").value = actualId.legal_document
+        document.getElementById("sexo").value = actualId.sex
+        document.getElementById("estado").value = actualId.address.state.uf
+        let ReadDate = new  Date(actualId.birthDate)
+        document.getElementById("ano").value = ReadDate.getYear() + 1900
+        document.getElementById("dia").value = ReadDate.getDate()
+        document.getElementById("mes").value = (ReadDate.getMonth() + 1)
     }
 
-    function deleteUser(email){
-        let text = "Você tem certeza que deseja deletar esse usuario?";
-        let SureRequest = false;
-        let path = 'user/delete/' + email;
+function deleteUser(email){
+    let text = "Você tem certeza que deseja deletar esse usuario?";
+    let SureRequest = false;
+    let path = 'user/delete/' + email;
 
-        if (confirm(text) == true ) {
-            console.log(path);
-            callRoute(API_URL+path, 'DELETE', undefined, undefined,1)
+    if (confirm(text) == true ) {
+        console.log(path);
+        callRoute(API_URL+path, 'DELETE', undefined, undefined,1)
 
-        }else{
+    }else{
 
-        }
     }
+}
 
 async function editUser(){
     let dataNew = (document.getElementById("ano").value) + '/' +
@@ -390,8 +404,3 @@ async function editUser(){
     }
 
 }
-
-    function add(index){
-
-
-    }

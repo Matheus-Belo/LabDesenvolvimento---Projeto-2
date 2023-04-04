@@ -49,6 +49,7 @@ async function requestUser(User) {
 
 
     window.localStorage.setItem("token", data.token);
+    window.localStorage.setItem("UserID", data.user.id)
     console.log(data);
     if(localStorage.token != null){
         if (confirm("Usuario logado com sucesso!") == true) {
