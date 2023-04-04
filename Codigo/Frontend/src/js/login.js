@@ -50,7 +50,16 @@ async function requestUser(User) {
 
     window.localStorage.setItem("token", data.token);
     console.log(data);
-    window.location.href = 'index.html';
+    if(localStorage.token != null){
+        if (confirm("Usuario logado com sucesso!") == true) {
+            text = "ok!";
+            window.location.href = 'index.html'
+        } else {
+            text = "Falha ao Logar";
+            window.location.href = 'index.html';
+        }
+    }
+
 }
 
 function callRoute(path, route_type, body){
