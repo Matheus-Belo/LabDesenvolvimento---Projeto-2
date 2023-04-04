@@ -252,8 +252,8 @@ async function CreateUser(){
                 'host': 'localhost:9999',
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/JSON',
-                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-                'authorization': 'Bearer ' + token
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+                //'authorization': 'Bearer ' + token
             },
             body: JSON.stringify(body)
         });
