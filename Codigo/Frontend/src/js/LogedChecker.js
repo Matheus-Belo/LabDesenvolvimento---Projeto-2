@@ -1,43 +1,69 @@
 async function Loged(){
     let isLoged = "";
-
     if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
-        isLoged += `<a href="Usuarios.html" class="btn btn-success btn active" role="button" aria-pressed="true">Perfil</a>`
-        isLoged += `<a href="index.html" class="btn btn-danger btn active ms-2" role="button" aria-pressed="true" onclick="LogOut()">Log Out</a>`
-        this.Access();
+        isLoged += `<div class="dropdown">
+        <a
+          class="dropdown-toggle d-flex align-items-center hidden-arrow"
+          href="#"
+          id="navbarDropdownMenuAvatar"
+          role="button"
+          data-mdb-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <img
+            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+            class="rounded-circle"
+            height="25"
+            alt="Black and White Portrait of a Man"
+            loading="lazy"
+          />
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="navbarDropdownMenuAvatar"
+        >
+          <li>
+            <a class="dropdown-item" href="#">My profile</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">Settings</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="Usuarios.html">Usuarios</a>
+          </li>
+          <li>
+            <a class="dropdown-item" onclick="LogOut()" href="#">Logout</a>
+          </li>
+        </ul>
+    </div>`
+        
     }else{
-        isLoged += `<a href="login.html" class="btn btn-danger btn active" role="button" aria-pressed="true">Login</a>`
-        this.Access();
+        isLoged += `
+        <a type="button" href="login.html" class="btn btn-primary me-3">
+          Login
+        </a>`
     }
 
-    document.getElementById("Login").innerHTML = isLoged
+    document.getElementById("Loged").innerHTML = isLoged
 }
 
 async function LogOut(){
     localStorage.removeItem('token');
 }
 
-async function AccessInCars(){
-    let AdminCarros = "";
-
+async function VerifyAccessToCars(){
     if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
-        AdminCarros += `<a class="nav-link active" href="RegistrarCarros.html">Carros</a>`
+        window.location.replace("RegistrarCarros.html")
     }else{
-        AdminCarros += `<a class="nav-link active" href="Carros.html">Carros</a>`
+        window.location.replace("Carros.html")
     }
-
-    document.getElementById("VerifyAccess").innerHTML = AdminCarros
 }
 
-async function Access(){
-    let AdminCarros = "";
-
-    if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
-        AdminCarros += `<a class="nav-link" href="RegistrarCarros.html">Carros</a>`
-    }else{
-        AdminCarros += `<a class="nav-link" href="Carros.html">Carros</a>`
-    }
-
-    document.getElementById("VerifyAccess").innerHTML = AdminCarros
+async function VerifyAccessToAlugar(){
+  if(localStorage.getItem('token') !== null && localStorage.getItem('token') !== "undefined"){
+      window.location.replace("aluguelCarro.html")
+  }else{
+      alert("Você precisa estar logado para fazer isso!!!!")
+  }
 }
 
