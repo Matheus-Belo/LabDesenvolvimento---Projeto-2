@@ -13,6 +13,7 @@ let rndInt
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const IDCarro = urlParams.get('CarID')
+var respBody
 
 $(document).ready(function() {
 
@@ -68,8 +69,14 @@ function callRoute(path, route_type, body, elementId, completeFunction){
                     break;
                 case 3: //ALUGUEL
                     savedData = data.responseJSON
-                    showContentInRents(data.responseJSON, elementId)
-                    showPaginationRentsSearch(data.responseJSON, 'carPagination', path)
+                    //showContentInRents(data.responseJSON, elementId)
+                    //showPaginationRentsSearch(data.responseJSON, 'carPagination', path)
+                    break;
+                case 4: //criar reserva
+                    savedData = data.responseJSON
+                    alert("Cadastro registrado com sucesso!");
+
+
                     break;
             }
 
@@ -89,6 +96,10 @@ function get(path, elementId){
 
 function post(path, body, elementId){
     callRoute(API_URL+path, 'POST', body)
+}
+
+function postCreateRent(path, body){
+    callRoute(API_URL+path, 'POST', body,undefined,4)
 }
 
 function callRouteDeleteUser(path){
@@ -154,31 +165,43 @@ async function getUserById(id) {
     console.log(User)
 }
 
+var actualDate = new Date();
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
-var date = new Date();
+
 
 async function createRent(){
-    var dataPegar = document.getElementById("DatePickUp").value
-    var Preco = document.getElementById("dia").value
-    var DataEntrega = date.addDays(Preco)
-    Preco *= rndInt 
+    var dataPegar = (document.getElementById("DatePickUp").value)
+    let Preco = document.getElementById("dia").value
+    let temp = new Date(dataPegar)
+    temp.addDays(Preco)
+    let dataEntrega = dataPegar
 
-    var body = {
-        idAttendant: null,
+    console.log(temp)
+    Preco *= rndInt
+
+    let body = {
+        createdAt: null,
+        deletedAt: null,
+        idAttendant: User,
         idCreator: User,
         idRent: 0,
         idVehicle: VehicleID,
         paymentStatus: "Pending",
         price: Preco,
-        returnDate: DataEntrega,
-        status: "pedido",
+        returnDate: dataEntrega,
+        status: "CREATED",
         withdrawDate: dataPegar
     }
 
-    if( ValidateCreate(dataPegar, Preco)
-    ){
-        urlUser = url + "/rents/create";
-        const response = await fetch(urlUser, {
+    console.log(body)
+
+
+    if( ValidateCreate(dataPegar, Preco) ){
+        let thisUrlVehicle = url + "/rents/create";
+
+        postCreateRent("rents/create",body)
+        /*
+        const response = await fetch(thisUrlVehicle, {
             method: "POST",
             headers: {
                 'host': 'localhost:9999',
@@ -187,14 +210,17 @@ async function createRent(){
                 "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
                 'authorization': 'Bearer ' + token
             },
-            body: JSON.stringify(body)
+            respBody: JSON.stringify(body)
         });
 
-        console.log(body)
-
-        alert("Cadastro registrado com sucesso!");
+        if(respBody!=null){
+            console.log(respBody)
+            alert("Cadastro registrado com sucesso!");
+        }else{
+            alert("Um ou mais campos vazios");
+        }
 	 }else{
-		alert("Um ou mais campos vazios");
+		alert("Um ou mais campos vazios");*/
 	}
 }
 

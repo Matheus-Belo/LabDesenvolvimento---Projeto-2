@@ -32,6 +32,9 @@ async function Loged(){
             <a class="dropdown-item" href="Usuarios.html">Usuarios</a>
           </li>
           <li>
+            <a class="dropdown-item" href="MinhasReservas.html">Minhas Reservas</a>
+          </li>
+          <li>
             <a class="dropdown-item" onclick="LogOut()" href="#">Logout</a>
           </li>
         </ul>

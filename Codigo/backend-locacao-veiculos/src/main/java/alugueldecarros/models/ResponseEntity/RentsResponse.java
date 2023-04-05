@@ -20,14 +20,14 @@ public class RentsResponse {
     private String status;
     private Date withdrawDate;
     private Date returnDate;
-    private Integer price;
+    private double price;
     private String paymentStatus;
     private Date createdAt;
     private Date deletedAt;
 
 
     public RentsResponse(Long idRent, User idCreator, User idAttendant,
-                         Vehicles idVehicle, String status, Date withdrawDate, Date returnDate, Integer price, String paymentStatus,
+                         Vehicles idVehicle, String status, Date withdrawDate, Date returnDate, double price, String paymentStatus,
                          Date createdAt, Date deletedAt) {
         this.idRent = idRent;
         this.idCreator = idCreator;

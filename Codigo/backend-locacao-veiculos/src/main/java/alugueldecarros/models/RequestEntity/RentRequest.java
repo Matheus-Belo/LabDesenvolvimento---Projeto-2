@@ -16,31 +16,23 @@ public class RentRequest {
 
     private Long idRent;
 
-    @NotNull(message = "Campo idCreator não pode ser nulo")
-    @NotEmpty(message = "Campo idCreator não pode ser vazio")
     private User idCreator;
 
-    @NotNull(message = "Campo idAttendant não pode ser nulo")
-    @NotEmpty(message = "Campo idAttendant não pode ser vazio")
     private User idAttendant;
 
-    @NotNull(message = "Campo idAttendant não pode ser nulo")
-    @NotEmpty(message = "Campo idAttendant não pode ser vazio")
     private Vehicles idVehicle;
 
 
     private String status;
 
-    @NotNull(message = "Campo withdrawDate não pode ser nulo")
-    @NotEmpty(message = "Campo withdrawDate não pode ser vazio")
+
     private Date withdrawDate;
 
-    @NotNull(message = "Campo returnDate não pode ser nulo")
-    @NotEmpty(message = "Campo returnDate não pode ser vazio")
+
     private Date returnDate;
 
 
-    private Integer price;
+    private double price;
 
 
     private String paymentStatus;

@@ -52,27 +52,29 @@ public class RentsServiceImpl implements RentsService {
 
     @Override
     public Page<Rents> listRentsByPage(Pageable pages) {
-        return null;
+        return this.rentsRepository.findAllByDeletedAtIsNullOrderByIdRent(pages);
     }
 
     @Override
     public Page<Rents> listRentsByPageAndStatus(Pageable pages, String status) {
-        return null;
+
+        return this.rentsRepository.findAllByStatusIgnoreCaseAndDeletedAtIsNull(pages,status);
     }
 
     @Override
     public Page<Rents> listRentsByUserAndPage(Pageable pages, Long idUser) {
-        return null;
+
+        return this.rentsRepository.findAllByIdCreatorAndDeletedAtIsNullOrderByIdRent(pages,idUser);
     }
 
     @Override
     public Page<Rents> listRentsByPageAndStatusAndUser(Pageable pages, String status, Long idUser) {
-        return null;
+        return this.rentsRepository.findAllByIdCreatorAndStatusIgnoreCaseAndDeletedAtIsNull(pages,idUser,status);
     }
 
     @Override
     public RentsResponse getRentById(Long idRent) {
-        return null;
+        return RentsResponse.fromRents(this.rentsRepository.findOneByIdRentAndDeletedAtIsNull(idRent));
     }
 
     @Override

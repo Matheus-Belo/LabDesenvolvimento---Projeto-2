@@ -40,7 +40,7 @@ public class Rents {
     private Date returnDate;
 
     @Column(name = "price")
-    private Integer price;
+    private double price;
 
     @Column(name = "payment_Status")
     private String paymentStatus;
@@ -71,7 +71,7 @@ public class Rents {
     }
 
     public Rents(User idCreator, User idAttendant, Vehicles idVehicle, String status,
-                 Date withdrawDate, Date returnDate, Integer price, String paymentStatus,
+                 Date withdrawDate, Date returnDate, double price, String paymentStatus,
                  Date createdAt, Date deletedAt) {
         this.idCreator = idCreator;
         this.idAttendant = idAttendant;
