@@ -31,3 +31,5 @@ Como agente do banco, eu quero associar um contrato de crédito a um pedido de a
 Como funcionário, eu quero gerenciar os automóveis disponíveis para aluguel (matrícula, ano, marca, modelo e placa) para colocar para oferta
 
 Como funcionário, eu quero gerenciar as ofertas de aluguel dos automóveis disponíveis para ter o acompanhamento administrativo
+
+https://demo.themesberg.com/volt-react-dashboard/#/#pages
