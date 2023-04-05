@@ -55,7 +55,7 @@ public class VehiclesController {
     }
 
     @PreAuthorize("@authorityChecker.isAllowed({'ADMIN'})")
-    @DeleteMapping(path = "/delete/idVehicle{idVehicle}")
+    @DeleteMapping(path = "/delete/idVehicle/{idVehicle}")
     @ApiOperation(value = "Desativa um registro de carro existente")
     public ResponseEntity<VehiclesResponse> deleteVehicle(@PathVariable(value="idVehicle") final Long idVehicle){
         return ResponseEntity.ok().body(

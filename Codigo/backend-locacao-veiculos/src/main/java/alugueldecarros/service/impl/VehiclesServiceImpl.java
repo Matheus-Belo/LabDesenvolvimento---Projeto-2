@@ -1,8 +1,10 @@
 package alugueldecarros.service.impl;
 
 import alugueldecarros.controller.VehiclesController;
+import alugueldecarros.models.Rents;
 import alugueldecarros.models.RequestEntity.UserRequest;
 import alugueldecarros.models.RequestEntity.VehiclesRequest;
+import alugueldecarros.models.ResponseEntity.RentsResponse;
 import alugueldecarros.models.ResponseEntity.VehiclesResponse;
 import alugueldecarros.models.Vehicles;
 import alugueldecarros.models.dto.UserDto;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -42,12 +45,32 @@ public class VehiclesServiceImpl implements VehiclesService {
 
     @Override
     public VehiclesResponse editVehicle(VehiclesRequest request) {
-        return null;
+
+        Vehicles vehicle = this.vehiclesRepository.findOneByIdVehicleAndDeletedAtIsNull(request.getIdVehicle());
+
+        if(vehicle!=null) {
+
+            Vehicles editedVehicle = VehiclesRequest.toVehicles(request);
+            editedVehicle.setIdVehicle(vehicle.getIdVehicle());
+
+            return VehiclesResponse.fromVehicles(
+                    this.vehiclesRepository.save(
+                            editedVehicle
+                    )
+            );
+        }else {
+            throw new NonUniqueResultException("Veiculo ja inexistente!");
+        }
+
     }
 
     @Override
     public VehiclesResponse deleteVehicle(Long idVehicle) {
-        return null;
+
+        Vehicles vehicle = this.vehiclesRepository.findOneByIdVehicleAndDeletedAtIsNull(idVehicle);
+
+        vehicle.setDeletedAt(new Date());
+        return VehiclesResponse.fromVehicles(this.vehiclesRepository.save(vehicle));
     }
 
     @Override

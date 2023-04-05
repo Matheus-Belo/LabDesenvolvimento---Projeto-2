@@ -290,11 +290,12 @@ async function TestAlugar(){
 function DeleteVehicle(id){
     let text = "Você tem certeza que deseja deletar esse veículo?";
     let SureRequest = false;
-    let path = 'vehicles/delete/idVehicle' + id;
+    let path = 'vehicles/delete/idVehicle/' + id;
+    console.log(path);
 
     if (confirm(text) == true ) {
         console.log(path);
-        callRoute(API_URL+path, 'DELETE', undefined, undefined,1)
+        callRoute(API_URL+path, 'DELETE', undefined, undefined,3)
 
     }else{
 
