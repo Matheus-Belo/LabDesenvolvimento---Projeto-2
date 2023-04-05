@@ -91,6 +91,7 @@ public class UserServiceImpl implements UserService {
     public UserDto editUser(UserRequest userRequest) throws NotFoundException {
 
         User user = this.userRepository.findOneByEmailAndDeletedAtIsNull(userRequest.getEmail());
+
         if (user == null){
             user = this.userRepository.findOneByIdUser(userRequest.getIdUser());
         }

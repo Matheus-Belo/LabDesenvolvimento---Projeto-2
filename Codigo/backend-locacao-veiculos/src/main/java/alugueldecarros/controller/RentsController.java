@@ -63,12 +63,12 @@ public class RentsController {
     }
 
 
-    @DeleteMapping(path = "/cancelRent")
+    @DeleteMapping(path = "/cancelRent/idRent{idRent}")
     @ApiOperation(value = "Cancela um pedido do proprio usuario logado (muda o status para cancelada) " +
             "id solicitante = id vinculado na rent, ou idADMIN")
-    public ResponseEntity<RentsResponse> cancelRent(){
+    public ResponseEntity<RentsResponse> cancelRent(@PathVariable(value="idRent") final Long idRent){
         return ResponseEntity.ok().body(
-                this.rentsService.cancelRentLoggedUser()
+                this.rentsService.cancelRentLoggedUser(idRent)
         );
     }
 

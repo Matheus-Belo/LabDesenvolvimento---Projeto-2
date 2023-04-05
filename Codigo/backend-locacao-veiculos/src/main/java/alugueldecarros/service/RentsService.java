@@ -20,8 +20,7 @@ public interface RentsService {
     RentsResponse editRent(RentRequest request);
 
     RentsResponse deleteRent(Long idRent);
-
-    RentsResponse cancelRentLoggedUser();
+    RentsResponse cancelRentLoggedUser(Long idRent);
 
     Page<Rents> listRentsByPage(Pageable pages);
 
